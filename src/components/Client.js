@@ -1,8 +1,29 @@
 import styled from "styled-components";
 import Image from "../images/avatar.png";
 
+const Client = (props) => {
+  return (
+    <Wrapper>
+      <Title>
+        <img
+          src={Image}
+          style={{ width: "50px", borderRadius: "50%" }}
+          alt="Avatar"
+        />
+        {props.name + " " + props.surname}
+      </Title>
+      <div>
+        Username: <strong>{props.username}</strong>
+      </div>
+      <div>
+        Email: <strong>{props.email}</strong>
+      </div>
+    </Wrapper>
+  );
+};
+
 const Wrapper = styled.div`
-  width: 200px;
+  width: 220px;
   height: 200px;
 
   background: rgb(139, 134, 221);
@@ -30,26 +51,5 @@ const Title = styled.div`
   align-items: center;
   gap: 2%;
 `;
-
-const Client = (props) => {
-  return (
-    <Wrapper>
-      <Title>
-        <img
-          src={Image}
-          style={{ width: "50px", borderRadius: "50%" }}
-          alt="Avatar"
-        />
-        {props.name + " " + props.surname}
-      </Title>
-      <div>
-        Username: <strong>{props.username}</strong>
-      </div>
-      <div>
-        Email: <strong>{props.email}</strong>
-      </div>
-    </Wrapper>
-  );
-};
 
 export default Client;

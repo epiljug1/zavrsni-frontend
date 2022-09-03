@@ -3,8 +3,7 @@ body {
   font-family: "Roboto", sans-serif;
   color: rgba(0,0,0,0.6);
   font-weight: 400;
-  
-  /* background: linear-gradient(255.72deg, #b392ee 0%, #673ab7 0.17%); */
+   
   background: linear-gradient(215.72deg, #b392ee 0%, #673ab7 77.17%);
   font-size: 1rem;
 
@@ -12,6 +11,8 @@ body {
   scrollbar-width: none; /* for Firefox */
   overflow-y: scroll; 
   
+  min-width: 100vw;
+  min-height: 100vh;
 
 }
 

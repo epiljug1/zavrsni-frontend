@@ -14,6 +14,7 @@ import { Link } from "react-router-dom";
 import { validatePassword, validateInput } from "../utils/validateData";
 import ValidationError from "../components/ValidationError";
 import Errors from "../components/Errors";
+import Spinner from "../components/Spinner";
 
 const SIGN_IN_CLIENT = gql`
   mutation ($signinInput: SigninInput) {
@@ -31,6 +32,7 @@ const SignIn = (props) => {
   const navigate = useNavigate();
   const context = useContext(authContext);
   const [errors, setErrors] = useState([]);
+  const [loadingSignin, setLoading] = useState(false);
 
   const username = useRef(null);
   const password = useRef(null);
@@ -40,18 +42,13 @@ const SignIn = (props) => {
 
   const [signInClient, { loading, error, data }] = useMutation(SIGN_IN_CLIENT, {
     update: (proxy, { data: { signInClient: userData } }) => {
-      console.log("data: " + userData);
-
-      context.login(userData);
+      console.log("data: ", userData);
       navigate("/all-posts");
-      // navigate("/signin");
     },
     onError: ({ graphQLErrors }) => {
       setErrors(graphQLErrors);
     },
   });
-  console.log("error: " + error);
-  console.log("loading: " + loading);
 
   const onSubmitHandler = (event) => {
     event.preventDefault();
@@ -73,58 +70,61 @@ const SignIn = (props) => {
   };
 
   return (
-    <Wrapper>
-      <FormWrapper onSubmit={onSubmitHandler}>
-        {/* <ImageWrapper> */}
-        <img src={Image} style={{ width: "50px" }} alt="ETF Logo" />
-        {/* </ImageWrapper> */}
-        <Title>Sign in</Title>
-        <ContentWrapper>
-          We suggest using the email you use at work
-        </ContentWrapper>
-        <InputField
-          ref={username}
-          placeholder="Enter username"
-          type="text"
-          style={{ marginBottom: "15px" }}
-        />
-        {usernameValidation && (
-          <ValidationError>{usernameValidation}</ValidationError>
-        )}
-        <InputField
-          ref={password}
-          placeholder="Enter password"
-          type="password"
-          style={{ marginBottom: "15px" }}
-        />
-        {passwordValidation && (
-          <ValidationError>{passwordValidation}</ValidationError>
-        )}
-        <Button
-          style={{
-            background: "#ff9800",
-            color: "#ffffff",
-            padding: "5px 90px",
-          }}
-        >
-          SIGN IN
-        </Button>
-        <ContentWrapper>
-          Don't have an account{" "}
-          <LinkNavigate to="/signup">Sign up</LinkNavigate>
-        </ContentWrapper>
-        {errors.map((error) => {
-          return (
-            <Errors>
-              {error.message}
-              {error.message.includes("username") && (
-                <strong>{username.current.value}</strong>
-              )}
-            </Errors>
-          );
-        })}
-      </FormWrapper>
-    </Wrapper>
+    <>
+      {loading && <Spinner />}
+      <Wrapper>
+        <FormWrapper onSubmit={onSubmitHandler}>
+          {/* <ImageWrapper> */}
+          <img src={Image} style={{ width: "50px" }} alt="ETF Logo" />
+          {/* </ImageWrapper> */}
+          <Title>Sign in</Title>
+          <ContentWrapper>
+            We suggest using the email you use at work
+          </ContentWrapper>
+          <InputField
+            ref={username}
+            placeholder="Enter username"
+            type="text"
+            style={{ marginBottom: "15px" }}
+          />
+          {usernameValidation && (
+            <ValidationError>{usernameValidation}</ValidationError>
+          )}
+          <InputField
+            ref={password}
+            placeholder="Enter password"
+            type="password"
+            style={{ marginBottom: "15px" }}
+          />
+          {passwordValidation && (
+            <ValidationError>{passwordValidation}</ValidationError>
+          )}
+          <Button
+            style={{
+              background: "#ff9800",
+              color: "#ffffff",
+              padding: "5px 90px",
+            }}
+          >
+            SIGN IN
+          </Button>
+          <ContentWrapper>
+            Don't have an account{" "}
+            <LinkNavigate to="/signup">Sign up</LinkNavigate>
+          </ContentWrapper>
+          {errors.map((error) => {
+            return (
+              <Errors>
+                {error.message}
+                {error.message.includes("username") && (
+                  <strong>{username.current.value}</strong>
+                )}
+              </Errors>
+            );
+          })}
+        </FormWrapper>
+      </Wrapper>
+    </>
   );
 };
 

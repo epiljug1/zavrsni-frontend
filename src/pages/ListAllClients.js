@@ -33,6 +33,7 @@ const ListAllClients = (props) => {
       <NavBar />
       {loading && <Spinner />}
       <MainWrapper>
+        <NumOfPosts>Number of clients: {data?.clients?.length}</NumOfPosts>
         {data?.clients?.map((client) => (
           <Client
             name={client.name}
@@ -41,25 +42,34 @@ const ListAllClients = (props) => {
             email={client.email}
           />
         ))}
-        <Counter>
-          Number of clients: <strong>{data?.clients?.length}</strong>
-        </Counter>
       </MainWrapper>
     </>
   );
 };
 
+const NumOfPosts = styled.div`
+  color: rgba(0, 0, 0, 0.9);
+  position: absolute;
+  top: 5px;
+  //   left: 30px;
+
+  width: fit-content;
+  margin: 10px auto;
+`;
+
 const MainWrapper = styled.div`
   overflow: scroll;
 
-  width: 80vw;
-  height: 80vh;
+  min-width: 80vw;
+  min-height: 80vh;
 
   margin: 6% 5%;
-  padding: 0px 14px;
+  padding: 20px 14px;
 
   box-shadow: 0px 2px 16px hsl(260deg 50% 10% / 0.9);
   border-radius: 10px;
+
+  position: relative;
 
   background: #d9cece;
 
@@ -71,11 +81,10 @@ const MainWrapper = styled.div`
     width: 0; /* Remove scrollbar space */
     background: transparent; /* Optional: just make scrollbar invisible */
   }
-`;
 
-const Counter = styled.div`
-  position: absolute;
-  bottom: 8%;
+  @media (max-width: 700px) {
+    margin: 13% 5%;
+  }
 `;
 
 export default ListAllClients;

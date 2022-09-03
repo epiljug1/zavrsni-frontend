@@ -1,17 +1,20 @@
 import styled from "styled-components";
 import Image from "../images/avatar.png";
+import DeleteImage from "../images/delete-icon.png";
+import Button from "./Button";
 
 const Post = (props) => {
   const onClickHandler = () => {
     console.log("clicked");
   };
-
   const date = new Date(props.date).toString().slice(0, 24);
-  // console.log(date.toString().slice(0, 24));
 
   return (
     <FirstWrapper onClick={onClickHandler}>
       <SecondWrapper>
+        {/* <Button onClick={props.onDeletePost}>
+          <img src={DeleteImage} alt="img" style={{ width: "30px" }} />
+        </Button> */}
         <Title>
           <img
             src={Image}
@@ -21,11 +24,55 @@ const Post = (props) => {
           {props.name + " " + props.surname}
         </Title>
         <Description>{props.description}</Description>
-        <DateWrapper>{date}</DateWrapper>
+        <PostWrapper>
+          <DateWrapper>{date}</DateWrapper>
+          {props.isClient && (
+            <div>
+              <Button
+                style={{
+                  margin: "0px 10px",
+                  borderRadius: "5px",
+                  border: "1px solid rgba(79, 76, 129, 1)",
+                }}
+                onClick={props.onDeletePost}
+              >
+                Delete
+              </Button>
+              <Button
+                style={{
+                  margin: "0px 10px",
+                  borderRadius: "5px",
+                  border: "1px solid rgba(79, 76, 129, 1)",
+                }}
+              >
+                Open
+              </Button>
+            </div>
+          )}
+        </PostWrapper>
+        {/* {props.delete && <button onClick={props.onDeletePost}>Delete</button>} */}
       </SecondWrapper>
     </FirstWrapper>
   );
 };
+
+const PostWrapper = styled.div`
+  display: flex;
+  justify-content: space-between;
+`;
+
+// const Button = styled.button`
+//   border-radius: 10px;
+//   background: transparent;
+//   top: 50px;
+//   right: 50px;
+//   border: 0px;
+//   position: absolute;
+//   &:hover: {
+//     scale: 1.1;
+//   }
+//   cursor: pointer;
+// `;
 
 const FirstWrapper = styled.div`
   width: 55vw;
@@ -46,7 +93,7 @@ const FirstWrapper = styled.div`
 
   margin: 100px auto;
 
-  cursor: pointer;
+  // cursor: pointer;
 `;
 
 const SecondWrapper = styled.div`
@@ -62,6 +109,7 @@ const SecondWrapper = styled.div`
 
   border-radius: 20px;
 
+  position: relative;
   padding: 30px 50px;
 
   display: flex;

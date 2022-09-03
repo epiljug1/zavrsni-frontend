@@ -11,6 +11,10 @@ import { useRef } from "react";
 import { useNavigate } from "react-router";
 import { Link } from "react-router-dom";
 
+import { validatePassword, validateInput } from "../utils/validateData";
+import ValidationError from "../components/ValidationError";
+import Errors from "../components/Errors";
+
 const SIGN_IN_CLIENT = gql`
   mutation ($signinInput: SigninInput) {
     signInClient(signinInput: $signinInput) {
@@ -28,8 +32,11 @@ const SignIn = (props) => {
   const context = useContext(authContext);
   const [errors, setErrors] = useState([]);
 
-  const email = useRef(null);
+  const username = useRef(null);
   const password = useRef(null);
+
+  const [usernameValidation, setUsernameValidation] = useState();
+  const [passwordValidation, setPasswordValidation] = useState();
 
   const [signInClient, { loading, error, data }] = useMutation(SIGN_IN_CLIENT, {
     update: (proxy, { data: { signInClient: userData } }) => {
@@ -46,12 +53,17 @@ const SignIn = (props) => {
   console.log("error: " + error);
   console.log("loading: " + loading);
 
-  const onSignInHandler = () => {
+  const onSubmitHandler = (event) => {
+    event.preventDefault();
+
     const value = {
-      username: email.current.value,
+      username: username.current.value,
       password: password.current.value,
     };
     console.log("SIGN IN VALUE: ", value);
+
+    setUsernameValidation(validateInput(value.username, "Username", true));
+    setPasswordValidation(validatePassword(value.password));
 
     signInClient({
       variables: {
@@ -62,7 +74,7 @@ const SignIn = (props) => {
 
   return (
     <Wrapper>
-      <FormWrapper>
+      <FormWrapper onSubmit={onSubmitHandler}>
         {/* <ImageWrapper> */}
         <img src={Image} style={{ width: "50px" }} alt="ETF Logo" />
         {/* </ImageWrapper> */}
@@ -71,24 +83,29 @@ const SignIn = (props) => {
           We suggest using the email you use at work
         </ContentWrapper>
         <InputField
-          ref={email}
-          placeholder="Enter email"
-          type="email"
+          ref={username}
+          placeholder="Enter username"
+          type="text"
           style={{ marginBottom: "15px" }}
         />
+        {usernameValidation && (
+          <ValidationError>{usernameValidation}</ValidationError>
+        )}
         <InputField
           ref={password}
           placeholder="Enter password"
           type="password"
           style={{ marginBottom: "15px" }}
         />
+        {passwordValidation && (
+          <ValidationError>{passwordValidation}</ValidationError>
+        )}
         <Button
           style={{
             background: "#ff9800",
             color: "#ffffff",
             padding: "5px 90px",
           }}
-          onClick={onSignInHandler}
         >
           SIGN IN
         </Button>
@@ -96,16 +113,26 @@ const SignIn = (props) => {
           Don't have an account{" "}
           <LinkNavigate to="/signup">Sign up</LinkNavigate>
         </ContentWrapper>
+        {errors.map((error) => {
+          return (
+            <Errors>
+              {error.message}
+              {error.message.includes("username") && (
+                <strong>{username.current.value}</strong>
+              )}
+            </Errors>
+          );
+        })}
       </FormWrapper>
-      {errors.map((error) => {
-        return <div>{error.message}</div>;
-      })}
     </Wrapper>
   );
 };
 
 const LinkNavigate = styled(Link)`
   text-decoration: none;
+  color: #2196f3;
+  cursor: pointer;
+  outline-color: #2196f3;
 `;
 
 const Wrapper = styled.div`
@@ -116,7 +143,7 @@ const Wrapper = styled.div`
   padding-top: 5rem;
 `;
 
-const FormWrapper = styled.div`
+const FormWrapper = styled.form`
   width: 20%;
   height: auto;
   margin: 0 auto;
@@ -124,6 +151,8 @@ const FormWrapper = styled.div`
   border-radius: 20px;
   text-align: center;
   padding: 60px 100px;
+
+  box-shadow: 0px 2px 16px hsl(260deg 50% 10% / 0.99);
 `;
 
 const InputField = styled.input`
@@ -134,6 +163,10 @@ const InputField = styled.input`
   padding: 5px 15px;
   border-color: 1px solid #c6d2d9;
   font-family: inherit;
+
+  // width: 90%;
+  margin-left: auto;
+  margin-right: auto;
 `;
 
 const ImageWrapper = styled.a`

@@ -5,7 +5,14 @@ import Title from "../components/Title";
 import Image from "../images/ETF_logo.png";
 import Button from "../components/Button";
 import { gql, useMutation } from "@apollo/client";
+import { Link } from "react-router-dom";
 import { useNavigate } from "react-router";
+import {
+  validateEmail,
+  validatePassword,
+  validateInput,
+} from "../utils/validateData";
+import Errors from "../components/Errors";
 
 const SIGNUP_CLIENT = gql`
   mutation ($createClientInput: CreateClientInput) {
@@ -22,11 +29,16 @@ const SIGNUP_CLIENT = gql`
 const SignUp = (props) => {
   let value = {};
 
-  const name = useRef(null);
-  const surname = useRef(null);
-  const username = useRef(null);
-  const email = useRef(null);
-  const password = useRef(null);
+  const [name, setName] = useState("");
+  const [surname, setSurname] = useState("");
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [nameValidation, setNameValidation] = useState();
+  const [surnameValidation, setSurnameValidation] = useState();
+  const [usernameValidation, setUsernameValidation] = useState();
+  const [emailValidation, setEmailValidation] = useState();
+  const [passwordValidation, setPasswordValidation] = useState();
 
   const context = useContext(authContext);
   let navigate = useNavigate();
@@ -44,69 +56,87 @@ const SignUp = (props) => {
     },
   });
 
-  const onClickHandler = () => {
+  const onSubmitHandler = (event) => {
+    event.preventDefault();
+    console.log("name: >" + name + "<");
     value = {
-      name: name.current.value,
-      surname: surname.current.value,
-      username: username.current.value,
-      email: email.current.value,
-      password: password.current.value,
+      name,
+      surname,
+      username,
+      email,
+      password,
     };
-
+    setNameValidation(validateInput(name, "Name"));
+    setSurnameValidation(validateInput(surname, "Surname"));
+    setUsernameValidation(validateInput(username, "Username"));
+    setEmailValidation(validateEmail(email));
+    setPasswordValidation(validatePassword(password));
     signUpClient({
       variables: {
         createClientInput: value,
       },
     });
   };
-
-  const onSubmitHandler = (event) => {
-    event.preventDefault();
-    console.log("varijabel");
+  const onNameChange = (e) => {
+    const name = e.target.value.trim();
+    setName(name);
   };
-
   return (
     <Wrapper>
-      <FormWrapper
-        onSubmit={() => {
-          console.log("aaa");
-        }}
-      >
+      <FormWrapper onSubmit={onSubmitHandler}>
         <img src={Image} style={{ width: "50px" }} alt="ETF Logo" />
         <Title>Sign Up</Title>
         <ContentWrapper>
           We suggest using the email you use at work
         </ContentWrapper>
         <InputField
-          ref={name}
+          value={name}
+          onChange={onNameChange}
           placeholder="Name"
           type="text"
           style={{ marginBottom: "15px" }}
         />
+        {nameValidation && <ValidationError>{nameValidation}</ValidationError>}
         <InputField
-          ref={surname}
+          value={surname}
+          onChange={(e) => setSurname(e.target.value.trim())}
           placeholder="Surname"
           type="text"
           style={{ marginBottom: "15px" }}
         />
+        {surnameValidation && (
+          <ValidationError>{surnameValidation}</ValidationError>
+        )}
         <InputField
-          ref={username}
+          value={username}
+          onChange={(e) => setUsername(e.target.value.trim())}
           placeholder="Username"
           type="text"
           style={{ marginBottom: "15px" }}
         />
+        {usernameValidation && (
+          <ValidationError>{usernameValidation}</ValidationError>
+        )}
         <InputField
-          ref={email}
+          value={email}
+          onChange={(e) => setEmail(e.target.value.trim())}
           placeholder="example@exmaple.com"
           type="email"
           style={{ marginBottom: "15px" }}
         />
+        {emailValidation && (
+          <ValidationError>{emailValidation}</ValidationError>
+        )}
         <InputField
-          ref={password}
+          value={password}
+          onChange={(e) => setPassword(e.target.value.trim())}
           placeholder="Password"
           type="password"
           style={{ marginBottom: "15px" }}
         />
+        {passwordValidation && (
+          <ValidationError>{passwordValidation}</ValidationError>
+        )}
         <Button
           type="submit"
           style={{
@@ -114,21 +144,33 @@ const SignUp = (props) => {
             color: "#ffffff",
             padding: "5px 90px",
           }}
-          onClick={onClickHandler}
         >
           SIGN UP
         </Button>
         <ContentWrapper>
-          Already have an account <Link>Sign In</Link>
+          Already have an account{" "}
+          <LinkNavigate to="/signin">Sign in</LinkNavigate>
         </ContentWrapper>
+        {errors.map((error) => {
+          return <Errors>{error.message}</Errors>;
+        })}
       </FormWrapper>
-      {errors.map((error) => {
-        return <div>{error.message}</div>;
-      })}
     </Wrapper>
   );
 };
 
+const ValidationError = styled.div`
+  color: red;
+  font-size: 0.8rem;
+  margin-top: -10px;
+`;
+
+const LinkNavigate = styled(Link)`
+  text-decoration: none;
+  color: #2196f3;
+  cursor: pointer;
+  outline-color: #2196f3;
+`;
 export default SignUp;
 
 const Wrapper = styled.div`
@@ -138,7 +180,7 @@ const Wrapper = styled.div`
   padding-top: 5rem;
 `;
 
-const FormWrapper = styled.div`
+const FormWrapper = styled.form`
   width: 20%;
   height: auto;
   margin: 0 auto;
@@ -168,10 +210,4 @@ const ImageWrapper = styled.a`
 
 const ContentWrapper = styled.p`
   text-align: center;
-`;
-
-const Link = styled.a`
-  color: #2196f3;
-  cursor: pointer;
-  outline-color: #2196f3;
 `;

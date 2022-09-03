@@ -1,10 +1,11 @@
 import NavBar from "../components/NavBar";
 import styled from "styled-components";
 import Client from "../components/Client";
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { AuthContext as authContext } from "../context/authContext";
 
 import { gql, useQuery } from "@apollo/client";
+import Spinner from "../components/Spinner";
 
 const GET_ALL_CLIENTS = gql`
   query {
@@ -18,14 +19,19 @@ const GET_ALL_CLIENTS = gql`
 `;
 
 const ListAllClients = (props) => {
-  const { loading, error, data } = useQuery(GET_ALL_CLIENTS);
+  const { loading, error, data, refetch } = useQuery(GET_ALL_CLIENTS);
 
   const context = useContext(authContext);
-  console.log("CONTEXT", context);
+  // console.log("CONTEXT", context);
   //   console.log(error.message);
+
+  useEffect(() => {
+    refetch();
+  });
   return (
     <>
       <NavBar />
+      {loading && <Spinner />}
       <MainWrapper>
         {data?.clients?.map((client) => (
           <Client

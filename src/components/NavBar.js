@@ -10,6 +10,7 @@ const NavBar = (props) => {
   const onSignOutHandler = () => {
     context.logout();
   };
+
   return (
     <NavWrapper>
       <span>
@@ -46,6 +47,7 @@ const LinkStyle = styled(Link)`
 
   &:hover {
     color: #b392ee;
+    scale: 1.1;
     // font-weight: bold;
   }
   &:focus {

@@ -2,13 +2,9 @@ import Post from "../components/Post";
 import styled from "styled-components";
 import { gql, useQuery } from "@apollo/client";
 import NavBar from "../components/NavBar";
-
-import Image from "../images/create.png";
-
-import React, { useContext, useState } from "react";
-import { AuthContext as authContext } from "../context/authContext";
-import CreatePost from "./CreatePost";
-import { useNavigate } from "react-router";
+import React, { useEffect, useState } from "react";
+import Spinner from "../components/Spinner";
+import NumOfPosts from "../components/NumOfPosts";
 
 const POSTS = gql`
   query {
@@ -25,14 +21,7 @@ const POSTS = gql`
 `;
 
 const AllPosts = (props) => {
-  const navigate = useNavigate();
-  const { loading, error, data } = useQuery(POSTS);
-  const [createPost, setCreatePost] = useState(false);
-
-  const context = useContext(authContext);
-  console.log("CONTEXT", context);
-  //   console.log("DATA");
-  //   console.log(data?.posts);
+  const { loading, error, data, refetch } = useQuery(POSTS);
 
   const [search, setSearch] = useState("");
   const onChangeHandler = (event) => {
@@ -42,23 +31,24 @@ const AllPosts = (props) => {
     }, 500);
   };
 
-  const onCreatePostHandler = () => {
-    navigate("/create-new-post");
-    setCreatePost(true);
-  };
+  useEffect(() => {
+    refetch();
+    console.log("refetch");
+  });
+
+  const anyPostAvailable = data?.posts.length > 0;
 
   return (
     <>
       <NavBar />
       <SearchFilter>
         <Input type="text" placeholder="Search" onChange={onChangeHandler} />
-        {/* <Input style={{ marginLeft: "auto", display: "none" }} type="text" /> */}
-        <Button onClick={onCreatePostHandler}>
-          <img src={Image} alt="img" style={{ width: "40px" }} />
-        </Button>
       </SearchFilter>
-
+      {loading && <Spinner />}
       <MainWrapper>
+        {anyPostAvailable && (
+          <NumOfPosts>Number of posts: {data?.posts.length}</NumOfPosts>
+        )}
         {data?.posts
           .filter((post) => post.content.includes(search))
           .map((post) => (
@@ -75,22 +65,12 @@ const AllPosts = (props) => {
   );
 };
 
-const Button = styled.button`
-  border-radius: 10px;
-  background: transparent;
-  margin-left: auto;
-  border: 0px;
-  &:hover {
-    scale: 1.2;
-    cursor: pointer;
-  }
-`;
-
 const SearchFilter = styled.div`
   display: flex;
   margin: 60px 1px 20px;
   width: 80%;
 `;
+
 const Input = styled.input`
   font-size: 1.125rem;
   padding: 10px;

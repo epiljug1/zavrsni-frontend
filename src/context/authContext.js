@@ -10,7 +10,10 @@ console.log("authContext: >" + localStorage.getItem("token") + "<");
 if (localStorage.getItem("token")) {
   console.log("evo");
   const decodedToken = jwtDecode(localStorage.getItem("token"));
-  console.log(decodedToken);
+  console.log("decodedToken: ", decodedToken);
+  // console.log("Date now: ", Date.now());
+  // console.log("Exp     : ", decodedToken.exp * 1000);
+  // console.log("jel: ", decodedToken.exp * 1000 < Date.now());
   if (decodedToken * 1000 < Date.now()) {
     //expired token
     console.log("expired");

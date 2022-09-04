@@ -6,90 +6,63 @@ import { useContext, useEffect, useRef, useState } from "react";
 import { AuthContext as authContext } from "../context/authContext";
 import Spinner from "../components/Spinner";
 
-const CREATE_NEW_POST = gql`
-  mutation ($newPostInput: NewPostInput) {
-    createNewPost(newPostInput: $newPostInput) {
-      content
-      author {
-        name
-      }
-    }
-  }
-`;
-
 const UPDATE_POST = gql`
   mutation ($editPostInput: EditPostInput) {
-    editPost(editPostInput: $editPostInput)
+    editPost(editPostInput: $editPostInput) {
+      content
+      createdAt
+      updatedAt
+    }
   }
 `;
 
-const CreateNewPost = (props) => {
-  const [errors, setErrors] = useState([]);
-  const [postAdded, setPostAdded] = useState("");
-
-  // const { data: postById, refetch } = useQuery(GET_POST_BY_ID);
-
-  // if (props.isEdit) {
-  //   refetch({
-  //     getPostByIdId: "631469399a036a4813ff5b8d",
-  //   });
-  // }
-
-  const [createNewPost, { loading, error, data }] = useMutation(
-    CREATE_NEW_POST,
-    {
-      onCompleted: () => {
-        // navigate("/personal-posts");
-        content.current.value = "";
-        setPostAdded("Post added successfuly!");
-        setErrors([]);
-      },
-      onError: ({ graphQLErrors }) => {
-        setErrors(graphQLErrors);
-        setPostAdded(false);
-      },
-    }
-  );
-
+const PostData = (props) => {
   const context = useContext(authContext);
-  console.log("user: ", context.user);
-  const navigate = useNavigate();
-  const content = useRef();
+  const contentValue = useRef();
+  const [errors, setErrors] = useState([]);
+  const [postUpdated, setPostUpdated] = useState("");
 
-  const onCloseHandler = () => {
-    navigate("/personal-posts");
-  };
-
-  const onCreateHandler = () => {
-    createNewPost({
-      variables: {
-        newPostInput: {
-          content: content.current.value,
-          author: context.user.email,
+  const [editPost, { loading }] = useMutation(UPDATE_POST, {
+    onCompleted: () => {
+      console.log("UPDATED POST SUCCESSFULY");
+      setPostUpdated("Post updated successfuly!");
+    },
+    onError: ({ graphQLErrors }) => {
+      setErrors(graphQLErrors);
+    },
+  });
+  console.log("errors: ", errors);
+  const onUpdatePost = () => {
+    if (contentValue.current.value !== props.content) {
+      const value = {
+        content: contentValue.current.value,
+        id: props.postId,
+      };
+      editPost({
+        variables: {
+          editPostInput: value,
         },
-      },
-    });
+      });
+      // if (!errors.length) props.onClose();
+    }
   };
+
   return (
     <>
-      <NavBar />
-      {loading && <Spinner />}
       <MainWrapper>
         <Title>
           {context.user.name} {context.user.surname}
         </Title>
-        <Input ref={content} />
+        <Input ref={contentValue} defaultValue={props.content} />
         <NewWrapper>
-          {postAdded && <PostAdded color="#418a21"> {postAdded}</PostAdded>}
+          {postUpdated && <PostAdded color="#418a21"> {postUpdated}</PostAdded>}
           {errors &&
             errors.map((error) => (
               <PostAdded color="#ed1a2f">{error.message}</PostAdded>
             ))}
-          {!postAdded && !errors.length && <br />}
-          <ButtonWrapper>
-            <Button onClick={onCloseHandler}>Close</Button>
-            <Button onClick={onCreateHandler}>Post</Button>
-          </ButtonWrapper>
+          {/* {!postAdded && !errors.length && <br />} */}
+
+          <Button onClick={onUpdatePost}>Update</Button>
         </NewWrapper>
       </MainWrapper>
     </>
@@ -98,7 +71,8 @@ const CreateNewPost = (props) => {
 
 const NewWrapper = styled.div`
   display: flex;
-  justify-content: space-between;
+  justify-content: space-around;
+  align-items: center;
   flex-wrap: wrap;
   @media (max-width: 1100px) {
     justify-content: center;
@@ -116,17 +90,6 @@ const PostAdded = styled.div`
 
   padding: 5px;
   width: fit-content;
-`;
-
-const ButtonWrapper = styled.div`
-  display: flex;
-  gap: 10px;
-  align-items: center;
-  @media (max-width: 500px) {
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 10px;
-  }
 `;
 
 const Button = styled.button`
@@ -176,19 +139,11 @@ const Title = styled.div`
 const MainWrapper = styled.div`
   overflow: scroll;
 
-  width: 50%;
-  height: 40%;
+  width: 75%;
 
-  position: relative;
   display: flex;
   flex-direction: column;
-
-  margin: 150px 20px 1000px;
-  //   margin: auto;
-  //   top: 0;
-  //   left: 0;
-  //   right: 0;
-  //   bottom: 100px;
+  margin: 0 auto;
 
   padding: 30px 40px 10px;
 
@@ -207,4 +162,4 @@ const MainWrapper = styled.div`
   }
 `;
 
-export default CreateNewPost;
+export default PostData;

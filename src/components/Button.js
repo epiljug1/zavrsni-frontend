@@ -11,7 +11,7 @@ const Button = styled.button`
     scale: 1.05;
   }
   &:focus {
-    background: red;
+    background: rgba(0, 0, 0, 0.7);
   }
 `;
 

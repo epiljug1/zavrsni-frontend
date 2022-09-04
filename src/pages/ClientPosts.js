@@ -10,12 +10,19 @@ import { useNavigate } from "react-router";
 import Spinner from "../components/Spinner";
 import NumOfPosts from "../components/NumOfPosts";
 
-const CLIENT_POSTS = gql`
+//
+import { Dialog, DialogOverlay, DialogContent } from "@reach/dialog";
+import "@reach/dialog/styles.css";
+import PostData from "./PostData";
+//
+
+const GET_CLIENT_POSTS = gql`
   query ($getClientPostsId: String!) {
     getClientPosts(email: $getClientPostsId) {
       id
       content
       createdAt
+      updatedAt
       author {
         name
         surname
@@ -30,22 +37,34 @@ const DELETE_POST = gql`
   }
 `;
 
+const GET_POST_BY_ID = gql`
+  query ($getPostByIdId: String) {
+    getPostById(id: $getPostByIdId) {
+      content
+      author {
+        name
+        surname
+      }
+    }
+  }
+`;
+
 const ClientPosts = (props) => {
   const navigate = useNavigate();
   const context = useContext(AuthContext);
-  console.log("context: ", context);
 
+  const [postId, setPostId] = useState(null);
+  const [loadingSpinner, setLoadingSpinner] = useState(false);
   const [search, setSearch] = useState("");
   const [errors, setErrors] = useState([]);
 
-  const [createPost, setCreatePost] = useState(false);
-
   const onCreatePostHandler = () => {
     navigate("/create-new-post");
-    setCreatePost(true);
   };
 
-  const [deletePost] = useMutation(DELETE_POST, {
+  const { data: postById, refetch: refetchPost } = useQuery(GET_POST_BY_ID);
+
+  const [deletePost, { loading: deleteLoading }] = useMutation(DELETE_POST, {
     update: () => {
       refetch({
         getClientPostsId: context.user.email,
@@ -56,48 +75,93 @@ const ClientPosts = (props) => {
     },
   });
 
-  const { data, refetch, loading } = useQuery(CLIENT_POSTS, {
+  const { data, refetch, loading } = useQuery(GET_CLIENT_POSTS, {
     variables: {
       getClientPostsId: context.user.email,
     },
   });
 
-  const anyPostAvailable = data?.getClientPosts.length > 0;
-
   useEffect(() => {
     refetch({
       getClientPostsId: context.user.email,
     });
-  }, []);
+  });
+
+  const onSearchHandler = (event) => {
+    clearTimeout(debounce);
+    setLoadingSpinner(true);
+
+    var debounce = setTimeout(() => {
+      setSearch(event.target.value);
+      setLoadingSpinner(false);
+    }, 600);
+  };
+
+  const anyPostAvailable = data?.getClientPosts?.length > 0;
+
+  const [showDialog, setShowDialog] = React.useState(false);
+  const onOpenDialogHandler = (postId) => {
+    setLoadingSpinner(true);
+    setPostId(postId);
+
+    refetchPost({
+      getPostByIdId: postId,
+    });
+
+    setTimeout(() => {
+      setShowDialog(true);
+      setLoadingSpinner(false);
+    }, 500);
+  };
+
+  const onCloseDialogHandler = () => {
+    setPostId("");
+    setShowDialog(false);
+  };
 
   return (
     <>
+      <Dialog
+        isOpen={showDialog}
+        onDismiss={onCloseDialogHandler}
+        style={{ background: "transparent" }}
+      >
+        <PostData
+          content={postById?.getPostById?.content}
+          postId={postId}
+          onClose={onCloseDialogHandler}
+        />
+      </Dialog>
       <NavBar />
       <SearchFilter>
-        <Input type="text" placeholder="Search" />
+        <Input type="text" placeholder="Search" onChange={onSearchHandler} />
         <Button onClick={onCreatePostHandler}>
           <img src={Image} alt="img" style={{ width: "40px" }} />
         </Button>
       </SearchFilter>
 
-      {loading && <Spinner />}
+      {(loading || deleteLoading || loadingSpinner) && <Spinner />}
       <MainWrapper>
         {anyPostAvailable && (
           <NumOfPosts>
-            Number of posts: {data?.getClientPosts.length}
+            Number of posts: <strong>{data?.getClientPosts?.length}</strong>
           </NumOfPosts>
         )}
         {data?.getClientPosts
-          .filter((post) => post.content.includes(search))
+          ?.filter((post) => post.content.includes(search))
           .map((post) => (
             <Post
               key={post.id}
-              name={post.author.name}
-              surname={post.author.surname}
+              name={post.author?.name}
+              surname={post.author?.surname}
               description={post.content}
               date={post.createdAt}
+              isUpdated={post.createdAt !== post.updatedAt}
               delete
               isClient
+              onOpenDialog={() => {
+                onOpenDialogHandler(post.id);
+              }}
               onDeletePost={() => {
                 console.log("onDeletePost");
                 deletePost({

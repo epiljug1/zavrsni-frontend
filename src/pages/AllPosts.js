@@ -6,11 +6,12 @@ import React, { useEffect, useState } from "react";
 import Spinner from "../components/Spinner";
 import NumOfPosts from "../components/NumOfPosts";
 
-const POSTS = gql`
+const GET_ALL_POSTS = gql`
   query {
     posts {
       content
       createdAt
+      updatedAt
       author {
         name
         surname
@@ -21,49 +22,61 @@ const POSTS = gql`
 `;
 
 const AllPosts = (props) => {
-  const { loading, error, data, refetch } = useQuery(POSTS);
-
+  const { loading, error, data, refetch } = useQuery(GET_ALL_POSTS);
   const [search, setSearch] = useState("");
-  const onChangeHandler = (event) => {
+  const [loadingSpinner, setLoadingSpinner] = useState(false);
+
+  const onSearchHandler = (event) => {
     clearTimeout(debounce);
+    setLoadingSpinner(true);
     var debounce = setTimeout(() => {
       setSearch(event.target.value);
-    }, 500);
+      setLoadingSpinner(false);
+    }, 600);
   };
 
   useEffect(() => {
     refetch();
-    console.log("refetch");
   });
 
-  const anyPostAvailable = data?.posts.length > 0;
+  const posts = data?.posts?.filter((post) => post.content.includes(search));
+  const anyPostAvailable = posts?.length > 0;
 
   return (
     <>
       <NavBar />
       <SearchFilter>
-        <Input type="text" placeholder="Search" onChange={onChangeHandler} />
+        <Input type="text" placeholder="Search" onChange={onSearchHandler} />
       </SearchFilter>
-      {loading && <Spinner />}
+      {(loading || loadingSpinner) && <Spinner />}
       <MainWrapper>
         {anyPostAvailable && (
-          <NumOfPosts>Number of posts: {data?.posts.length}</NumOfPosts>
+          <NumOfPosts>
+            Number of posts: <strong>{posts?.length}</strong>
+          </NumOfPosts>
         )}
-        {data?.posts
-          .filter((post) => post.content.includes(search))
-          .map((post) => (
-            <Post
-              key={post.id}
-              name={post.author.name}
-              surname={post.author.surname}
-              description={post.content}
-              date={post.createdAt}
-            />
-          ))}
+        {posts?.map((post) => (
+          <Post
+            key={post.id}
+            name={post.author?.name}
+            surname={post.author?.surname}
+            description={post.content}
+            date={post.createdAt}
+            isUpdated={post.createdAt !== post.updatedAt}
+          />
+        ))}
+        {!anyPostAvailable && <NoPosts>There is no post to display!</NoPosts>}
       </MainWrapper>
     </>
   );
 };
+
+const NoPosts = styled.div`
+  text-align: center;
+  color: black;
+  font-size: 1.2rem;
+  margin: 10px;
+`;
 
 const SearchFilter = styled.div`
   display: flex;

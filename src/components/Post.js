@@ -12,9 +12,6 @@ const Post = (props) => {
   return (
     <FirstWrapper onClick={onClickHandler}>
       <SecondWrapper>
-        {/* <Button onClick={props.onDeletePost}>
-          <img src={DeleteImage} alt="img" style={{ width: "30px" }} />
-        </Button> */}
         <Title>
           <img
             src={Image}
@@ -25,7 +22,10 @@ const Post = (props) => {
         </Title>
         <Description>{props.description}</Description>
         <PostWrapper>
-          <DateWrapper>{date}</DateWrapper>
+          <DateWrapper>
+            {props.isUpdated ? "(Edited) " : ""}
+            {date}
+          </DateWrapper>
           {props.isClient && (
             <div>
               <Button
@@ -44,6 +44,7 @@ const Post = (props) => {
                   borderRadius: "5px",
                   border: "1px solid rgba(79, 76, 129, 1)",
                 }}
+                onClick={props.onOpenDialog}
               >
                 Open
               </Button>

@@ -5,6 +5,7 @@ import { AuthContext as authContext } from "../context/authContext";
 
 const NavBar = (props) => {
   const context = useContext(authContext);
+  // console.log("NAVBAR: ", context.user);
   const navigate = useNavigate();
 
   const onSignOutHandler = () => {

@@ -33,7 +33,9 @@ const ListAllClients = (props) => {
       <NavBar />
       {loading && <Spinner />}
       <MainWrapper>
-        <NumOfPosts>Number of clients: {data?.clients?.length}</NumOfPosts>
+        <NumOfPosts>
+          Number of clients: <strong>{data?.clients?.length}</strong>
+        </NumOfPosts>
         {data?.clients?.map((client) => (
           <Client
             name={client.name}

@@ -43,6 +43,7 @@ const SignIn = (props) => {
   const [signInClient, { loading, error, data }] = useMutation(SIGN_IN_CLIENT, {
     update: (proxy, { data: { signInClient: userData } }) => {
       console.log("data: ", userData);
+      context.login(userData);
       navigate("/all-posts");
     },
     onError: ({ graphQLErrors }) => {

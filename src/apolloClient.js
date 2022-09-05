@@ -6,7 +6,7 @@ import { createUploadLink } from "apollo-upload-client";
 // });
 
 const httpLink = createHttpLink({
-  uri: "http://localhost:4000/",
+  uri: process.env.PORT || "http://localhost:4000/",
 });
 
 const authLink = setContext((_, { headers }) => {

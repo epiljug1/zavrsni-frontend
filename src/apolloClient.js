@@ -5,7 +5,7 @@ import { createUploadLink } from "apollo-upload-client";
 //   uri: "http://localhost:4000/",
 // });
 
-const httpLink = createUploadLink({
+const httpLink = createHttpLink({
   uri: "http://localhost:4000/",
 });
 
@@ -23,7 +23,6 @@ const authLink = setContext((_, { headers }) => {
 });
 
 const client = new ApolloClient({
-  // uri: "http://localhost:4000/", // production server
   link: authLink.concat(httpLink),
   cache: new InMemoryCache(),
   name: "web",

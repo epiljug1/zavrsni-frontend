@@ -17,29 +17,49 @@ const CREATE_NEW_POST = gql`
   }
 `;
 
-const UPDATE_POST = gql`
-  mutation ($editPostInput: EditPostInput) {
-    editPost(editPostInput: $editPostInput)
+const GET_CLIENT_POSTS = gql`
+  query ($getClientPostsId: String!) {
+    getClientPosts(email: $getClientPostsId) {
+      id
+      content
+      createdAt
+      updatedAt
+      author {
+        name
+        surname
+      }
+    }
   }
 `;
 
 const CreateNewPost = (props) => {
+  const context = useContext(authContext);
+  const navigate = useNavigate();
+
+  const content = useRef();
   const [errors, setErrors] = useState([]);
   const [postAdded, setPostAdded] = useState("");
 
-  // const { data: postById, refetch } = useQuery(GET_POST_BY_ID);
+  const {
+    data: clientPosts,
+    refetch,
+    loading: loadingClientPosts,
+  } = useQuery(GET_CLIENT_POSTS, {
+    variables: {
+      getClientPostsId: context.user.email,
+    },
+  });
 
-  // if (props.isEdit) {
-  //   refetch({
-  //     getPostByIdId: "631469399a036a4813ff5b8d",
-  //   });
-  // }
+  const isLimit = clientPosts?.getClientPosts.length === 3;
 
   const [createNewPost, { loading, error, data }] = useMutation(
     CREATE_NEW_POST,
     {
       onCompleted: () => {
         // navigate("/personal-posts");
+        refetch({
+          getClientPostsId: context.user.email,
+        });
         content.current.value = "";
         setPostAdded("Post added successfuly!");
         setErrors([]);
@@ -50,11 +70,6 @@ const CreateNewPost = (props) => {
       },
     }
   );
-
-  const context = useContext(authContext);
-  console.log("user: ", context.user);
-  const navigate = useNavigate();
-  const content = useRef();
 
   const onCloseHandler = () => {
     navigate("/personal-posts");
@@ -80,15 +95,22 @@ const CreateNewPost = (props) => {
         </Title>
         <Input ref={content} />
         <NewWrapper>
-          {postAdded && <PostAdded color="#418a21"> {postAdded}</PostAdded>}
+          {postAdded && !isLimit && (
+            <PostAdded color="#418a21"> {postAdded}</PostAdded>
+          )}
           {errors &&
             errors.map((error) => (
               <PostAdded color="#ed1a2f">{error.message}</PostAdded>
             ))}
-          {!postAdded && !errors.length && <br />}
+          {isLimit && (
+            <PostAdded color="#c728c7">
+              Hey {context.user.username}, can't have more than 3 posts today!
+            </PostAdded>
+          )}
+          {!postAdded && !isLimit && !errors.length && <br />}
           <ButtonWrapper>
             <Button onClick={onCloseHandler}>Close</Button>
-            <Button onClick={onCreateHandler}>Post</Button>
+            {!isLimit && <Button onClick={onCreateHandler}>Post</Button>}
           </ButtonWrapper>
         </NewWrapper>
       </MainWrapper>

@@ -65,7 +65,11 @@ const AllPosts = (props) => {
             isUpdated={post.createdAt !== post.updatedAt}
           />
         ))}
-        {!anyPostAvailable && <NoPosts>There is no post to display!</NoPosts>}
+        {!anyPostAvailable && (
+          <NoPosts>
+            Today there is no post to display. <strong>Create your own!</strong>
+          </NoPosts>
+        )}
       </MainWrapper>
     </>
   );

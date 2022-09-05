@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import Image from "../images/avatar.png";
+import Image from "../images/user.png";
 
 const Client = (props) => {
   return (

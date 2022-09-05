@@ -25,7 +25,6 @@ const NavBar = (props) => {
             Logout
           </LinkStyle>
         )}
-        {context.user && <LinkStyle to="/">Edit profile</LinkStyle>}
         {context.user && <LinkStyle to="/">{context.user.username}</LinkStyle>}
         {!context.user && <LinkStyle to="/signup">Sign up</LinkStyle>}
         {!context.user && <LinkStyle to="/signin">Sign in</LinkStyle>}

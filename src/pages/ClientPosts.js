@@ -98,6 +98,7 @@ const ClientPosts = (props) => {
   };
 
   const anyPostAvailable = data?.getClientPosts?.length > 0;
+  const isLimit = data?.getClientPosts.length === 3;
 
   const [showDialog, setShowDialog] = React.useState(false);
   const onOpenDialogHandler = (postId) => {
@@ -135,16 +136,24 @@ const ClientPosts = (props) => {
       <NavBar />
       <SearchFilter>
         <Input type="text" placeholder="Search" onChange={onSearchHandler} />
-        <Button onClick={onCreatePostHandler}>
-          <img src={Image} alt="img" style={{ width: "40px" }} />
-        </Button>
+        {!isLimit && (
+          <Button onClick={onCreatePostHandler}>
+            <img src={Image} alt="img" style={{ width: "40px" }} />
+          </Button>
+        )}
       </SearchFilter>
 
       {(loading || deleteLoading || loadingSpinner) && <Spinner />}
       <MainWrapper>
         {anyPostAvailable && (
           <NumOfPosts>
-            Number of posts: <strong>{data?.getClientPosts?.length}</strong>
+            {isLimit ? (
+              <strong> You can only have 3 post in one day!</strong>
+            ) : (
+              <div>
+                Number of posts: <strong>{data?.getClientPosts?.length}</strong>
+              </div>
+            )}
           </NumOfPosts>
         )}
         {data?.getClientPosts
@@ -159,6 +168,7 @@ const ClientPosts = (props) => {
               isUpdated={post.createdAt !== post.updatedAt}
               delete
               isClient
+              isLimit
               onOpenDialog={() => {
                 onOpenDialogHandler(post.id);
               }}
@@ -177,7 +187,7 @@ const ClientPosts = (props) => {
         {!anyPostAvailable && (
           <NoPosts>
             Hey <strong>{context.user.username}</strong>, you don't have any
-            posts!
+            posts today!
           </NoPosts>
         )}
       </MainWrapper>

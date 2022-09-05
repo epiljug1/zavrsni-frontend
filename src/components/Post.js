@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import Image from "../images/avatar.png";
+import Image from "../images/user.png";
 import DeleteImage from "../images/delete-icon.png";
 import Button from "./Button";
 

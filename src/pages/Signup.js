@@ -85,7 +85,7 @@ const SignUp = (props) => {
     <Wrapper>
       <FormWrapper onSubmit={onSubmitHandler}>
         <img src={Image} style={{ width: "50px" }} alt="ETF Logo" />
-        <Title>Sign Up</Title>
+        <Title>Sign Upp</Title>
         <ContentWrapper>
           We suggest using the email you use at work
         </ContentWrapper>

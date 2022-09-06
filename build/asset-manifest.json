@@ -1,14 +1,14 @@
 {
   "files": {
     "main.css": "/static/css/main.1baa151b.css",
-    "main.js": "/static/js/main.1746c50f.js",
+    "main.js": "/static/js/main.88089780.js",
     "static/media/ETF_logo.png": "/static/media/ETF_logo.bd788625032479b8ae77.png",
     "index.html": "/index.html",
     "main.1baa151b.css.map": "/static/css/main.1baa151b.css.map",
-    "main.1746c50f.js.map": "/static/js/main.1746c50f.js.map"
+    "main.88089780.js.map": "/static/js/main.88089780.js.map"
   },
   "entrypoints": [
     "static/css/main.1baa151b.css",
-    "static/js/main.1746c50f.js"
+    "static/js/main.88089780.js"
   ]
 }

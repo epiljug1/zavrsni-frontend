@@ -9,6 +9,8 @@ const httpLink = createHttpLink({
   uri: process.env.PORT || "http://localhost:4000/",
 });
 
+console.log("httpLink: ", httpLink);
+
 const authLink = setContext((_, { headers }) => {
   // get the authentication token from local storage if it exists
   const token = localStorage.getItem("token");

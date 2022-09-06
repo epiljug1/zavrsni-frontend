@@ -7,7 +7,7 @@ import { createUploadLink } from "apollo-upload-client";
 
 const httpLink = createHttpLink({
   // uri: process.env.PORT || "http://localhost:4000/",
-  uri: "https://evegram-etf.herokuapp.com/",
+  uri: "https://zavrsni-backend.herokuapp.com/",
 });
 
 console.log("httpLink: ", process.env.PORT);

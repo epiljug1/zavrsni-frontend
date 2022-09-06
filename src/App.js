@@ -13,9 +13,6 @@ import { AuthContext as authContext } from "./context/authContext";
 
 function App() {
   const context = useContext(authContext);
-  console.log(new Date().getDate());
-  console.log(new Date().getMonth() + 1);
-  console.log(new Date().getFullYear());
   return (
     <>
       <Content>

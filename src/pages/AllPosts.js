@@ -21,7 +21,7 @@ const GET_ALL_POSTS = gql`
   }
 `;
 
-const AllPosts = (props) => {
+const AllPosts = () => {
   const { loading, error, data, refetch } = useQuery(GET_ALL_POSTS);
   const [search, setSearch] = useState("");
   const [loadingSpinner, setLoadingSpinner] = useState(false);
@@ -67,7 +67,8 @@ const AllPosts = (props) => {
         ))}
         {!anyPostAvailable && (
           <NoPosts>
-            Today there is no post to display. <strong>Create your own!</strong>
+            Today there is no posts to display.{" "}
+            <strong>Create your own ones!</strong>
           </NoPosts>
         )}
       </MainWrapper>

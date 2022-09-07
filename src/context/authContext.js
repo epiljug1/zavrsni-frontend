@@ -5,18 +5,13 @@ const initalState = {
   user: null,
 };
 
-console.log("authContext: >" + localStorage.getItem("token") + "<");
-
 if (localStorage.getItem("token")) {
   const decodedToken = jwtDecode(localStorage.getItem("token"));
-  console.log("decodedToken: ", decodedToken);
 
   if (decodedToken * 1000 < Date.now()) {
     //expired token
-    console.log("expired");
     localStorage.removeItem("token");
   } else {
-    console.log("valid token");
     initalState.user = decodedToken;
   }
 }

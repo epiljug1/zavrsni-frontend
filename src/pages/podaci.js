@@ -55,7 +55,7 @@ const Podaci = (props) => {
             date={post.createdAt}
             delete
             onDeletePost={() => {
-              console.log("onDeletePost");
+              // console.log("onDeletePost");
               props.setIsDelete((prev) => !prev);
               deletePost({
                 variables: {

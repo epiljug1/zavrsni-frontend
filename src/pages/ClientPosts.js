@@ -173,7 +173,7 @@ const ClientPosts = (props) => {
                 onOpenDialogHandler(post.id);
               }}
               onDeletePost={() => {
-                console.log("onDeletePost");
+                // console.log("onDeletePost");
                 deletePost({
                   variables: {
                     deletePost: {

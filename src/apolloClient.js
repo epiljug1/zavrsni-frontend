@@ -7,10 +7,8 @@ import { createUploadLink } from "apollo-upload-client";
 
 const httpLink = createHttpLink({
   // uri: process.env.PORT || "http://localhost:4000/",
-  uri: "https://zavrsni-backend.herokuapp.com/",
+  uri: "https://evegram-etf-backend.onrender.com/",
 });
-
-console.log("httpLink: ", process.env.PORT);
 
 const authLink = setContext((_, { headers }) => {
   // get the authentication token from local storage if it exists

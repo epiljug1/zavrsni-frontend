@@ -24,7 +24,7 @@ const PostData = (props) => {
 
   const [editPost, { loading }] = useMutation(UPDATE_POST, {
     onCompleted: () => {
-      console.log("UPDATED POST SUCCESSFULY");
+      // console.log("UPDATED POST SUCCESSFULY");
       setPostUpdated("Post updated successfuly!");
     },
     onError: ({ graphQLErrors }) => {

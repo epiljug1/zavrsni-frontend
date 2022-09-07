@@ -4,7 +4,7 @@ import styled from "styled-components";
 import Button from "../components/Button";
 import Title from "../components/Title";
 
-import Image from "../images/ETF_logo.png";
+import Image from "../images/logo2.jpg";
 
 import { gql, useMutation } from "@apollo/client";
 import { useRef } from "react";
@@ -58,16 +58,17 @@ const SignIn = (props) => {
       username: username.current.value,
       password: password.current.value,
     };
-    console.log("SIGN IN VALUE: ", value);
 
     setUsernameValidation(validateInput(value.username, "Username", true));
     setPasswordValidation(validatePassword(value.password));
 
-    signInClient({
-      variables: {
-        signinInput: value,
-      },
-    });
+    if (!usernameValidation && !passwordValidation) {
+      signInClient({
+        variables: {
+          signinInput: value,
+        },
+      });
+    }
   };
 
   return (
@@ -76,12 +77,10 @@ const SignIn = (props) => {
       <Wrapper>
         <FormWrapper onSubmit={onSubmitHandler}>
           {/* <ImageWrapper> */}
-          <img src={Image} style={{ width: "50px" }} alt="ETF Logo" />
+          <img src={Image} style={{ width: "85px" }} alt="ETF Logo" />
           {/* </ImageWrapper> */}
           <Title>Sign in</Title>
-          <ContentWrapper>
-            We suggest using the email you use at work
-          </ContentWrapper>
+          <ContentWrapper></ContentWrapper>
           <InputField
             ref={username}
             placeholder="Enter username"

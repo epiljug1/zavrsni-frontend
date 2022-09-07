@@ -2,7 +2,7 @@ import React, { useContext, useRef, useState } from "react";
 import { AuthContext as authContext } from "../context/authContext";
 import styled from "styled-components";
 import Title from "../components/Title";
-import Image from "../images/ETF_logo.png";
+import Image from "../images/logo2.jpg";
 import Button from "../components/Button";
 import { gql, useMutation } from "@apollo/client";
 import { Link } from "react-router-dom";
@@ -46,8 +46,6 @@ const SignUp = (props) => {
 
   const [signUpClient, { loading, error, data }] = useMutation(SIGNUP_CLIENT, {
     update: (proxy, { data: { signUpClient: clientData } }) => {
-      console.log("data");
-      console.log(clientData);
       context.login(clientData);
       navigate("/list-all-clients");
     },
@@ -58,7 +56,6 @@ const SignUp = (props) => {
 
   const onSubmitHandler = (event) => {
     event.preventDefault();
-    console.log("name: >" + name + "<");
     value = {
       name,
       surname,
@@ -71,11 +68,19 @@ const SignUp = (props) => {
     setUsernameValidation(validateInput(username, "Username"));
     setEmailValidation(validateEmail(email));
     setPasswordValidation(validatePassword(password));
-    signUpClient({
-      variables: {
-        createClientInput: value,
-      },
-    });
+    if (
+      emailValidation &&
+      !nameValidation &&
+      !surnameValidation &&
+      !usernameValidation &&
+      !passwordValidation
+    ) {
+      signUpClient({
+        variables: {
+          createClientInput: value,
+        },
+      });
+    }
   };
   const onNameChange = (e) => {
     const name = e.target.value.trim();
@@ -84,11 +89,9 @@ const SignUp = (props) => {
   return (
     <Wrapper>
       <FormWrapper onSubmit={onSubmitHandler}>
-        <img src={Image} style={{ width: "50px" }} alt="ETF Logo" />
-        <Title>Sign Upp</Title>
-        <ContentWrapper>
-          We suggest using the email you use at work
-        </ContentWrapper>
+        <img src={Image} style={{ width: "85px" }} alt="ETF Logo" />
+        <Title>Sign Up</Title>
+        <ContentWrapper>Input your info</ContentWrapper>
         <InputField
           value={name}
           onChange={onNameChange}

@@ -37,8 +37,8 @@ const SignIn = (props) => {
   const username = useRef(null);
   const password = useRef(null);
 
-  const [usernameValidation, setUsernameValidation] = useState();
-  const [passwordValidation, setPasswordValidation] = useState();
+  const [usernameValidation, setUsernameValidation] = useState("");
+  const [passwordValidation, setPasswordValidation] = useState("");
 
   const [signInClient, { loading, error, data }] = useMutation(SIGN_IN_CLIENT, {
     update: (proxy, { data: { signInClient: userData } }) => {

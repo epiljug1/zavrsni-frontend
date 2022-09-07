@@ -34,11 +34,11 @@ const SignUp = (props) => {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [nameValidation, setNameValidation] = useState();
-  const [surnameValidation, setSurnameValidation] = useState();
-  const [usernameValidation, setUsernameValidation] = useState();
-  const [emailValidation, setEmailValidation] = useState();
-  const [passwordValidation, setPasswordValidation] = useState();
+  const [nameValidation, setNameValidation] = useState("");
+  const [surnameValidation, setSurnameValidation] = useState("");
+  const [usernameValidation, setUsernameValidation] = useState("");
+  const [emailValidation, setEmailValidation] = useState("");
+  const [passwordValidation, setPasswordValidation] = useState("");
 
   const context = useContext(authContext);
   let navigate = useNavigate();
@@ -69,7 +69,7 @@ const SignUp = (props) => {
     setEmailValidation(validateEmail(email));
     setPasswordValidation(validatePassword(password));
     if (
-      emailValidation &&
+      !emailValidation &&
       !nameValidation &&
       !surnameValidation &&
       !usernameValidation &&

@@ -9,7 +9,7 @@ export const validateEmail = (email) => {
   ) {
     return "email is not valid!";
   }
-  return false;
+  return "";
 };
 
 export const validateInput = (input, field, isSignin) => {
@@ -17,7 +17,7 @@ export const validateInput = (input, field, isSignin) => {
     if (!input.length) {
       return `${field} field can not be empty`;
     }
-    return false;
+    return "";
   }
   if (input.length < 5) {
     return `${field} field should have at least 5 characters!`;
@@ -25,7 +25,7 @@ export const validateInput = (input, field, isSignin) => {
   if (input.length > 10) {
     return `${field} field should have less than 10 characters!`;
   }
-  return false;
+  return "";
 };
 
 export const validatePassword = (password) => {
@@ -35,5 +35,5 @@ export const validatePassword = (password) => {
   if (password.length < 5) {
     return "Password should have at least 5 characters!";
   }
-  return false;
+  return "";
 };

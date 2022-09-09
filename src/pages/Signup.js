@@ -89,7 +89,14 @@ const SignUp = (props) => {
   return (
     <Wrapper>
       <FormWrapper onSubmit={onSubmitHandler}>
-        <img src={Image} style={{ width: "85px" }} alt="ETF Logo" />
+        <img
+          src={Image}
+          style={{ width: "85px", cursor: "pointer" }}
+          alt="ETF Logo"
+          onClick={() => {
+            navigate("/");
+          }}
+        />
         <Title>Sign Up</Title>
         <ContentWrapper>Input your info</ContentWrapper>
         <InputField
